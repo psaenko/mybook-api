@@ -22,7 +22,7 @@ async function bootstrap() {
 	app.setGlobalPrefix('api');
 
 	app.enableCors({origin: ['http://localhost:3000']});
-	await app.listen(50000);
+	await app.listen(process.env.PORT || 50000);
 	logger.log(`API running on 50000 port`)
 }
 
