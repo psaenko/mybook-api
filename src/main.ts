@@ -14,6 +14,7 @@ async function bootstrap() {
 		.setVersion('1.0')
 		.addServer('http://localhost:50000/api/', 'Local environment')
 		.addServer('https://mybook.dniprorada.gov.ua/api/', 'Production environment')
+		.addServer('https://mybook-api-production.up.railway.app/api/', 'TEST production environment')
 		.build();
 
 	const document = SwaggerModule.createDocument(app, config);
