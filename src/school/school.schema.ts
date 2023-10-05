@@ -1,6 +1,6 @@
 import { HydratedDocument, Schema as MSchema } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { City } from '../city/city.model';
+import { City } from '../city/city.schema';
 
 export type SchoolDocument = HydratedDocument<School>
 

@@ -1,8 +1,8 @@
 import { HydratedDocument, Schema as MSchema } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { City } from '../city/city.model';
-import { Role } from '../role/role.model';
-import { School } from '../school/school.model';
+import { City } from '../city/city.schema';
+import { Role } from '../role/role.schema';
+import { School } from '../school/school.schema';
 
 export type UserDocument = HydratedDocument<User>
 
@@ -14,11 +14,14 @@ export class User {
 	@Prop({ unique: true })
 	login: string;
 
-	@Prop({ unique: true })
+	@Prop()
 	email: string;
 
 	@Prop({ required: true })
 	passwordHash: string;
+
+	@Prop({ required: false, default: true })
+	status: boolean;
 
 	@Prop({ type: MSchema.Types.ObjectId, ref: 'City' })
 	city: City;
@@ -35,7 +38,7 @@ export class User {
 	@Prop()
 	avatar: string;
 
-	@Prop({ type: MSchema.Types.ObjectId, ref: 'Role' })
+	@Prop({ type: MSchema.Types.ObjectId, ref: 'Role', default: '6519a12cc60f1fcd95aa9aa2' })
 	role: Role;
 }
 

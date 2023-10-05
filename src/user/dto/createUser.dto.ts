@@ -3,31 +3,31 @@ import { ApiProperty } from '@nestjs/swagger';
 export class CreateUserDto {
 	@ApiProperty({
 		example: 'Саєнко Павло Сергійович',
-		required: true
+		required: true,
 	})
 	fullName: string;
 
 	@ApiProperty({
 		example: 'psaienko',
-		required: true
+		required: true,
 	})
 	login: string;
 
 	@ApiProperty({
 		example: 'qwerty123',
-		required: true
+		required: true,
 	})
 	password: string;
 
 	@ApiProperty({
 		example: '6512f25c770624afefed1293',
-		required: true
+		required: true,
 	})
 	city: string;
 	@ApiProperty({
-		example: 'Admin',
+		example: '6519a12cc60f1fcd95aa9aa2',
 		required: false,
-		default: 'User'
+		default: '6519a12cc60f1fcd95aa9aa2',
 	})
 	role: string;
 }

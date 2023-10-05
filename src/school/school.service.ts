@@ -1,37 +1,47 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Schema } from 'mongoose';
-import { SchoolDocument, School } from './school.model';
+import { Model } from 'mongoose';
+import { SchoolDocument, School } from './school.schema';
 import { UpdateSchoolDto } from './dto/update.dto';
 import { CreateSchoolDto } from './dto/create.dto';
+import {NOT_FOUND_ERROR, ALREADY_EXIST_ERROR} from './school.constants'
 
 @Injectable()
 export class SchoolService {
 	constructor(@InjectModel(School.name) private schoolModel: Model<SchoolDocument>) {
 	}
 
-	async getAllSchools() {
+	async findAll() {
 		return this.schoolModel.find();
 	}
 
-	async getSchoolsById(id: string) {
-		return await this.schoolModel.findById(id);
+	async findById(id: string) {
+		const school = await this.schoolModel.findById(id);
+		if (!school) {
+			throw new NotFoundException(NOT_FOUND_ERROR);
+		}
+		return school;
 	}
 
-	async getSchoolsByCity(city: string, type?: string) {
+	async findByCity(city: string, type?: string) {
 		return await this.schoolModel.find({ city, type });
 	}
 
-	async createSchool(CreateSchoolDto: CreateSchoolDto) {
-		const newSchool = await new this.schoolModel(CreateSchoolDto);
+	async create(createSchoolDto: CreateSchoolDto) {
+		const existingSchool = await this.schoolModel.findOne({ name: createSchoolDto.name });
+		if (existingSchool) {
+			throw new ConflictException(ALREADY_EXIST_ERROR);
+		}
+		const newSchool = new this.schoolModel(createSchoolDto);
 		return newSchool.save();
 	}
 
-	async updateSchool(id: string, UpdateSchoolDto: UpdateSchoolDto) {
-		return await this.schoolModel.findByIdAndUpdate(id, UpdateSchoolDto);
+	async update(id: string, updateSchoolDto: UpdateSchoolDto) {
+		return await this.schoolModel.findByIdAndUpdate(id, updateSchoolDto, { new: true });
 	}
 
-	async deleteSchool(id: string) {
+	async delete(id: string) {
 		return await this.schoolModel.findByIdAndDelete(id);
 	}
 }
+

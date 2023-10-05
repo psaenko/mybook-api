@@ -1,32 +1,76 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Schema } from 'mongoose';
-import { CityDocument, City } from './city.model';
-import { CreateCityDto } from './dto/create.dto';
+import { Model } from 'mongoose';
+import { City, CityDocument } from './city.schema';
+import { CreateCityDto } from './dto/city.dto';
+
+const PAGE_LIMIT = 10;
 
 @Injectable()
 export class CityService {
-	constructor(@InjectModel(City.name) private cityModel: Model<CityDocument>) {
+	private logger = new Logger('CityService');
+	constructor(@InjectModel(City.name) private readonly cityModel: Model<CityDocument>) {}
+
+	private getSkip(page: number): number {
+		return (page - 1) * PAGE_LIMIT;
 	}
 
-	async getAllCities() {
-		return await this.cityModel.find();
+	async findAll(isShow?: boolean, page: number = 1) {
+		const skip = this.getSkip(page);
+		const query = isShow !== undefined ? { isShow } : {};
+		const [total, data] = await Promise.all([
+			this.cityModel.countDocuments(query),
+			this.cityModel.find(query).skip(skip).limit(PAGE_LIMIT),
+		]);
+		this.logger.log(`Finding all cities with isShow: ${isShow} and page: ${page}`);
+		return {
+			data,
+			total,
+			totalPages: Math.ceil(total / PAGE_LIMIT),
+		};
 	}
 
-	async getCity(id: string) {
-		return await this.cityModel.findById(id);
+	async findAllList(isShow?: boolean): Promise<CityDocument[]> {
+		const query = isShow !== undefined ? { isShow } : {};
+		this.logger.log(`Finding all cities list with isShow: ${isShow}`);
+		return this.cityModel.find(query).exec();
 	}
 
-	async createCity(CreateCityDto: CreateCityDto) {
-		const newCity = await new this.cityModel(CreateCityDto);
+	async findByName(name: string): Promise<CityDocument> {
+		this.logger.log(`Finding city by name: ${name}`);
+		return this.cityModel.findOne({ name }).exec();
+	}
+
+	async findById(id: string): Promise<CityDocument> {
+		this.logger.log(`Finding city by id: ${id}`);
+		const city = await this.cityModel.findById(id).exec();
+		if (!city) {
+			throw new NotFoundException(`City with id ${id} not found`);
+		}
+		return city;
+	}
+
+	async create(createCityDto: CreateCityDto): Promise<CityDocument> {
+		const newCity = new this.cityModel(createCityDto);
+		this.logger.log(`Creating a new city with name: ${createCityDto.name}`);
 		return newCity.save();
 	}
 
-	async updateCity(id: string, city: City) {
-		return await this.cityModel.findByIdAndUpdate(id, city, { new: true });
+	async update(id: string, city: any) {
+		this.logger.log(`Updating city: ${id}`);
+		const updatedCity = await this.cityModel.findByIdAndUpdate(id, city , { new: true }).exec();
+		if (!updatedCity) {
+			throw new NotFoundException(`City with id ${id} not found`);
+		}
+		return updatedCity;
 	}
 
-	async deleteCity(id: string) {
-		return await this.cityModel.findByIdAndRemove(id);
+	async remove(id: string): Promise<CityDocument> {
+		this.logger.log(`Deleting city: ${id}`);
+		const deletedCity = await this.cityModel.findByIdAndRemove(id).exec();
+		if (!deletedCity) {
+			throw new NotFoundException(`City with id ${id} not found`);
+		}
+		return deletedCity;
 	}
 }

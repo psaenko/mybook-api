@@ -1,5 +1,4 @@
-export class CreateRoleDto {
+export class RoleDto {
 	name: string;
-
 	description: string;
 }

@@ -5,8 +5,11 @@ export type CityDocument = HydratedDocument<City>
 
 @Schema({ timestamps: true })
 export class City {
-	@Prop({ required: true })
+	@Prop({ required: true, unique: true })
 	name: string;
+
+	@Prop({ default: true })
+	isShow: boolean;
 }
 
 export const CitySchema = SchemaFactory.createForClass(City);

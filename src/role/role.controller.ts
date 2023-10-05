@@ -1,34 +1,64 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+	Controller,
+	Get,
+	Post,
+	Body,
+	Patch,
+	Param,
+	Delete,
+	BadRequestException,
+	Logger,
+	UsePipes,
+	ValidationPipe, Query, ParseIntPipe,
+} from '@nestjs/common';
 import { RoleService } from './role.service';
-import { CreateRoleDto } from './dto/create-role.dto';
-import { UpdateRoleDto } from './dto/update-role.dto';
+import { RoleDto } from './dto/role.dto';
+import { ALREADY_EXIST_ERROR } from './role.constants';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Role')
 @Controller('role')
 export class RoleController {
-  constructor(private readonly roleService: RoleService) {}
+	private logger = new Logger('RoleController');
 
-  @Post()
-  create(@Body() createRoleDto: CreateRoleDto) {
-    return this.roleService.create(createRoleDto);
-  }
+	constructor(private readonly roleService: RoleService) {}
 
-  @Get()
-  findAll() {
-    return this.roleService.findAll();
-  }
+	@UsePipes(new ValidationPipe())
+	@Post()
+	async create(@Body() roleDto: RoleDto) {
+		const oldRole = await this.roleService.findOne(roleDto.name);
+		if (oldRole) {
+			this.logger.error(`On created role: ${roleDto.name}. Error - ${ALREADY_EXIST_ERROR}`);
+			throw new BadRequestException(ALREADY_EXIST_ERROR);
+		}
+		return this.roleService.create(roleDto);
+	}
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.roleService.findOne(+id);
-  }
+	@Get()
+	findAll(
+		@Query('page', new ParseIntPipe()) page: number,
+		@Query('limit', new ParseIntPipe()) limit: number
+	) {
+		this.logger.log('Getting all roles');
+		return this.roleService.findAll(page, limit);
+	}
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
-    return this.roleService.update(+id, updateRoleDto);
-  }
+	@Get(':id')
+	findOne(@Param('id') id: string) {
+		this.logger.log(`Getting role by id: ${id}`);
+		return this.roleService.findOne(id);
+	}
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.roleService.remove(+id);
-  }
+	@UsePipes(new ValidationPipe())
+	@Patch(':id')
+	update(@Param('id') id: string, @Body() role: Object) {
+		this.logger.log(`Updating role with id: ${id}`);
+		return this.roleService.update(id, role);
+	}
+
+	@Delete(':id')
+	delete(@Param('id') id: string) {
+		this.logger.log(`Deleting role with id: ${id}`);
+		return this.roleService.delete(id);
+	}
 }

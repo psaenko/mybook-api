@@ -4,9 +4,10 @@ import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { getJWTConfig } from '../configs/jwt.config';
-import { UserModule } from '../user/user.module';
+import { UserModule } from '../user/user.module'; // Импорт UserModule добавлен здесь
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { RoleModule } from '../role/role.module';
 
 @Module({
 	providers: [AuthService, JwtStrategy],
@@ -19,7 +20,8 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 		}),
 		ConfigModule,
 		UserModule,
-		PassportModule
+		PassportModule,
+		RoleModule
 	]
 })
 export class AuthModule {
