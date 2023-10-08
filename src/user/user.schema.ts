@@ -11,17 +11,17 @@ export class User {
 	@Prop({ required: true })
 	fullName: string;
 
-	@Prop({ unique: true })
+	@Prop({ unique: true, required: false })
 	login: string;
+
+	@Prop({ required: false, default: null })
+	passwordHash: string;
+
+	@Prop({ default: 'active' })
+	status: string;
 
 	@Prop()
 	email: string;
-
-	@Prop({ required: true })
-	passwordHash: string;
-
-	@Prop({ required: false, default: true })
-	status: boolean;
 
 	@Prop({ type: MSchema.Types.ObjectId, ref: 'City' })
 	city: City;
@@ -29,14 +29,12 @@ export class User {
 	@Prop({ type: MSchema.Types.ObjectId, ref: 'School' })
 	school: School;
 
-	// @Prop({ type: MSchema.Types.ObjectId, ref: 'Class' })
-	// class: Class;
-
-	// @Prop({type: MSchema.Types.ObjectId, ref: 'ExtracurricularInstitution'})
-	// extracurricularInstitution: ExtracurricularInstitution;
-
 	@Prop()
 	avatar: string;
+
+	@Prop({ type: Boolean, default: false })
+	withGoogle: boolean;
+
 
 	@Prop({ type: MSchema.Types.ObjectId, ref: 'Role', default: '6519a12cc60f1fcd95aa9aa2' })
 	role: Role;

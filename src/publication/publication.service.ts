@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Publication, PublicationDocument } from './publication.schema';
 import { PublicationDto } from './dto/publication.dto';
+import { SubCategory, SubCategoryDocument } from '../sub-category/sub-category.schema';
 
 const PAGE_LIMIT = 10;
 
@@ -10,7 +11,10 @@ const PAGE_LIMIT = 10;
 export class PublicationService {
 	private readonly logger = new Logger(PublicationService.name);
 
-	constructor(@InjectModel(Publication.name) private publicationModel: Model<PublicationDocument>) {
+	constructor(
+		@InjectModel(Publication.name) private publicationModel: Model<PublicationDocument>,
+		@InjectModel(SubCategory.name) private subCategoryModel: Model<SubCategoryDocument>,
+	) {
 	}
 
 	private getSkip(page: number): number {
@@ -24,7 +28,7 @@ export class PublicationService {
 			this.publicationModel.countDocuments(query),
 			this.publicationModel.find(query).skip(skip).limit(PAGE_LIMIT)
 				.populate('category', 'name')
-				.populate('authors', 'name -_id')
+				.populate('authors', 'name -_id'),
 		]);
 		this.logger.log(`Finding all publications with isShow: ${isShow} and page: ${page}`);
 		return {
@@ -35,7 +39,7 @@ export class PublicationService {
 	}
 
 	async findAllByCategory(
-		categoryId: string,
+		mainCategoryId: string,
 		author?: string,
 		startYear?: number,
 		endYear?: number,
@@ -43,7 +47,11 @@ export class PublicationService {
 		page: number = 1,
 	) {
 		const skip = this.getSkip(page);
-		const query: any = { category: categoryId };
+		const subCategories = await this.subCategoryModel.find({ mainCategory: mainCategoryId });
+
+		const subCategoryIds = subCategories.map(subCategory => subCategory._id);
+
+		const query: any = { category: { $in: subCategoryIds } };
 
 		if (author) {
 			query.author = author;
@@ -62,9 +70,9 @@ export class PublicationService {
 				.skip(skip)
 				.limit(PAGE_LIMIT)
 				.populate('category', 'name')
-				.populate('authors', 'name -_id')
+				.populate('authors', 'name -_id'),
 		]);
-		this.logger.log(`Finding all publications by category with id: ${categoryId}`);
+		this.logger.log(`Finding all publications by main category with id: ${mainCategoryId}`);
 		return {
 			data,
 			total,

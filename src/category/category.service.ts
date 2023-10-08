@@ -2,9 +2,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Category, CategoryDocument } from './category.schema';
-import { CategoryDto } from './dto/category.dto';
-
-const PAGE_LIMIT = 10;
+import { CreateDto, UpdateDto } from './dto/category.dto';
 
 @Injectable()
 export class CategoryService {
@@ -20,8 +18,8 @@ export class CategoryService {
     return this.categoryModel.findOne({ name });
   }
 
-  async create(createCategoryDto: CategoryDto) {
-    const newCategory = new this.categoryModel(createCategoryDto);
+  async create(createDto: CreateDto) {
+    const newCategory = new this.categoryModel(createDto);
     const savedCategory = await newCategory.save();
     this.logger.log(`Created category with id: ${savedCategory.id}`);
     return savedCategory;
@@ -35,8 +33,8 @@ export class CategoryService {
     return category;
   }
 
-  async update(id: string, isCheck: boolean) {
-    const updatedCategory = await this.categoryModel.findByIdAndUpdate(id, { isShow: isCheck }, { new: true });
+  async update(id: string, updateDto: any) {
+    const updatedCategory = await this.categoryModel.findByIdAndUpdate(id, updateDto, { new: true });
     if (!updatedCategory) {
       throw new NotFoundException(`Category with id ${id} not found`);
     }

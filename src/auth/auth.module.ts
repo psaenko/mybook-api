@@ -4,13 +4,14 @@ import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { getJWTConfig } from '../configs/jwt.config';
-import { UserModule } from '../user/user.module'; // Импорт UserModule добавлен здесь
+import { UserModule } from '../user/user.module';
 import { PassportModule } from '@nestjs/passport';
-import { JwtStrategy } from './strategies/jwt.strategy';
 import { RoleModule } from '../role/role.module';
+import { GoogleStrategy } from '../strategies/google.strategy';
+import { AvatarGeneratorModule } from '../avatar-generator/avatar-generator.module';
 
 @Module({
-	providers: [AuthService, JwtStrategy],
+	providers: [AuthService, GoogleStrategy],
 	controllers: [AuthController],
 	imports: [
 		JwtModule.registerAsync({
@@ -21,8 +22,9 @@ import { RoleModule } from '../role/role.module';
 		ConfigModule,
 		UserModule,
 		PassportModule,
-		RoleModule
-	]
+		RoleModule,
+		AvatarGeneratorModule
+	],
 })
 export class AuthModule {
 }

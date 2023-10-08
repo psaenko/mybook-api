@@ -2,7 +2,7 @@ import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './user.schema';
 import { Model } from 'mongoose';
-import { CreateUserDto } from './dto/createUser.dto';
+import { CreateDto, UpdateDto } from './dto/user.dto';
 import { compare, genSalt, hash } from 'bcrypt';
 import { USER_NOT_FOUND_ERROR, WRONG_PASSWORD_ERROR } from '../auth/auth.constants';
 import { JwtService } from '@nestjs/jwt';
@@ -30,12 +30,12 @@ export class UserService {
 		return { token, role: name, fullName, id};
 	}
 
-	async create(createUserDto: CreateUserDto) {
+	async create(createDto: CreateDto) {
 		const salt = await genSalt(10);
-		const passwordHash = await hash(createUserDto.password, salt);
+		const passwordHash = await hash(createDto.password, salt);
 		const avatar = this.avatarGeneratorService.generateRandomAvatar()
 		const user = await new this.userModel({
-			...createUserDto,
+			...createDto,
 			passwordHash,
 			avatar
 		}).save();
@@ -63,6 +63,18 @@ export class UserService {
 
 	findById(id: string): any {
 		return this.userModel.findById(id);
+	}
+
+	async findOrCreateUser(userDto: any): Promise<any> {
+		let user = await this.userModel.findOne({ email: userDto.email }).exec();
+		if (!user) {
+			user = await new this.userModel(userDto).save();
+		}
+		return user;
+	}
+
+	findRoleById(id: string): any {
+		return this.userModel.findById(id).select('role');
 	}
 
 	async findByLogin(login: string) {

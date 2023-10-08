@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, BadRequestException, Logger } from '@nes
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Author, AuthorDocument } from './author.schema';
-import { CreateAuthorDto } from './dto/author.dto';
+import { CreateDto, UpdateDto } from './dto/author.dto';
 import { ALREADY_EXIST_ERROR, NOT_FOUND_ERROR } from './city.constants';
 
 const PAGE_LIMIT = 10;
@@ -12,12 +12,12 @@ export class AuthorService {
 	private readonly logger = new Logger(AuthorService.name);
 	constructor(@InjectModel(Author.name) private authorModel: Model<AuthorDocument>) {}
 
-	async create(createAuthorDto: CreateAuthorDto) {
-		const existingAuthor = await this.authorModel.findOne({ name: createAuthorDto.name });
+	async create(createDto: CreateDto) {
+		const existingAuthor = await this.authorModel.findOne({ name: createDto.name });
 		if (existingAuthor) {
 			throw new BadRequestException(ALREADY_EXIST_ERROR);
 		}
-		const author = new this.authorModel(createAuthorDto);
+		const author = new this.authorModel(createDto);
 		return author.save();
 	}
 
@@ -47,8 +47,8 @@ export class AuthorService {
 		return author;
 	}
 
-	async update(id: string, updateAuthorDto: CreateAuthorDto) {
-		return this.authorModel.findByIdAndUpdate(id, updateAuthorDto, { new: true });
+	async update(id: string, updateDto: UpdateDto) {
+		return this.authorModel.findByIdAndUpdate(id, updateDto, { new: true });
 	}
 
 	async remove(id: string) {

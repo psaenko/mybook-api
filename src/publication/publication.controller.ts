@@ -50,10 +50,10 @@ export class PublicationController {
 	async findAllByCategory(
 		@Param('categoryId') categoryId: string,
 		@Query('author') author: string,
-		@Query('startYear', new ParseIntPipe()) startYear: number,
-		@Query('endYear', new ParseIntPipe()) endYear: number,
+		@Query('startYear') startYear: number,
+		@Query('endYear') endYear: number,
 		@Query('isShow') isShow: boolean,
-		@Query('page', new ParseIntPipe()) page: number,
+		@Query('page') page: number,
 	) {
 		return this.publicationService.findAllByCategory(
 			categoryId,

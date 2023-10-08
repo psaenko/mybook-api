@@ -5,14 +5,17 @@ import {
 	Get,
 	Logger, ParseIntPipe,
 	Post,
-	Query,
+	Query, UseGuards,
 	UsePipes,
 	ValidationPipe,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/createUser.dto';
+import { CreateDto, UpdateDto } from './dto/user.dto';
 import { ALREADY_REGISTERED_ERROR } from '../auth/auth.constants';
 import { UserService } from './user.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Roles } from '../decorators/roles.decorator';
+import { ApiRoles } from '../decorators/api-roles.decorator';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
 @ApiTags('User')
 @Controller('user')
@@ -22,22 +25,35 @@ export class UserController {
 	constructor(private readonly userService: UserService) {
 	}
 
-	@UsePipes(new ValidationPipe())
+	@ApiBearerAuth()
+	@ApiOperation({ summary: 'Create a new user' })
+	@ApiResponse({ status: 201, description: 'The user has been successfully created.' })
+	@ApiResponse({ status: 400, description: 'User already exists or invalid data.' })
 	@Post()
-	async create(@Body() createUserDto: CreateUserDto) {
-		const oldUser = await this.userService.findByLogin(createUserDto.login);
+	@UsePipes(new ValidationPipe())
+	async create(@Body() createDto: CreateDto) {
+		const oldUser = await this.userService.findByLogin(createDto.login);
 		if (oldUser) {
-			this.logAndThrowError(createUserDto, ALREADY_REGISTERED_ERROR);
+			this.logAndThrowError(createDto, ALREADY_REGISTERED_ERROR);
 		}
-		this.logger.verbose(`Created user: ${createUserDto.fullName} (${createUserDto.login})`);
-		return this.userService.create(createUserDto);
+		this.logger.verbose(`Created user: ${createDto.fullName} (${createDto.login})`);
+		return this.userService.create(createDto);
 	}
 
-	private logAndThrowError(createUserDto: CreateUserDto, error: string) {
-		this.logger.error(`On created user: ${createUserDto.fullName} (${createUserDto.login}). Error - ${error}`);
+	private logAndThrowError(createDto: CreateDto, error: string) {
+		this.logger.error(`On created user: ${createDto.fullName} (${createDto.login}). Error - ${error}`);
 		throw new BadRequestException(error);
 	}
 
+	@ApiBearerAuth()
+	@ApiOperation({ summary: 'Get all users' })
+	@ApiResponse({ status: 200, description: 'Returns the list of all users.' })
+	@ApiResponse({ status: 403, description: 'Forbidden.' })
+	@ApiQuery({ name: 'isShow', type: Boolean, required: true, example: [true, false] })
+	@ApiParam({ name: 'page', required: true, type: Number, example: 1 })
+	@Roles('ADMIN')
+	@ApiRoles('ADMIN')
+	@UseGuards(JwtAuthGuard)
 	@Get()
 	async findAll(
 		@Query('isShow') isShow: boolean,

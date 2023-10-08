@@ -2,7 +2,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { City, CityDocument } from './city.schema';
-import { CreateCityDto } from './dto/city.dto';
+import { CreateDto, UpdateDto } from './dto/city.dto';
 
 const PAGE_LIMIT = 10;
 
@@ -50,15 +50,15 @@ export class CityService {
 		return city;
 	}
 
-	async create(createCityDto: CreateCityDto): Promise<CityDocument> {
-		const newCity = new this.cityModel(createCityDto);
-		this.logger.log(`Creating a new city with name: ${createCityDto.name}`);
+	async create(createDto: CreateDto): Promise<CityDocument> {
+		const newCity = new this.cityModel(createDto);
+		this.logger.log(`Creating a new city with name: ${createDto.name}`);
 		return newCity.save();
 	}
 
-	async update(id: string, city: any) {
+	async update(id: string, updateDto: UpdateDto) {
 		this.logger.log(`Updating city: ${id}`);
-		const updatedCity = await this.cityModel.findByIdAndUpdate(id, city , { new: true }).exec();
+		const updatedCity = await this.cityModel.findByIdAndUpdate(id, updateDto , { new: true }).exec();
 		if (!updatedCity) {
 			throw new NotFoundException(`City with id ${id} not found`);
 		}
