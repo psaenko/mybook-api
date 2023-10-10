@@ -1,20 +1,23 @@
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './user.schema';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { CreateDto, UpdateDto } from './dto/user.dto';
 import { compare, genSalt, hash } from 'bcrypt';
 import { USER_NOT_FOUND_ERROR, WRONG_PASSWORD_ERROR } from '../auth/auth.constants';
 import { JwtService } from '@nestjs/jwt';
 import { RoleService } from '../role/role.service';
 import { LoginDto } from '../auth/dto/login.dto';
-import { AvatarGeneratorService } from '../avatar-generator/avatar-generator.service'
+import { AvatarGeneratorService } from '../avatar-generator/avatar-generator.service';
+import { ObjectId } from 'mongodb';
+import any = jasmine.any;
 
 const PAGE_LIMIT = 10;
 
 @Injectable()
 export class UserService {
 	private logger = new Logger('CityService');
+
 	constructor(@InjectModel(User.name)
 							private userModel: Model<UserDocument>,
 							private readonly jwtService: JwtService,
@@ -26,18 +29,18 @@ export class UserService {
 	private async generateToken(user: any) {
 		const { role, id, fullName } = user;
 		const { name } = await this.roleService.findOne(role);
-		const token = await this.jwtService.signAsync({ id });
-		return { token, role: name, fullName, id};
+		const token = await this.jwtService.signAsync({ id, role: name });
+		return { token, role: name, fullName, id };
 	}
 
 	async create(createDto: CreateDto) {
 		const salt = await genSalt(10);
 		const passwordHash = await hash(createDto.password, salt);
-		const avatar = this.avatarGeneratorService.generateRandomAvatar()
+		const avatar = this.avatarGeneratorService.generateRandomAvatar();
 		const user = await new this.userModel({
 			...createDto,
 			passwordHash,
-			avatar
+			avatar,
 		}).save();
 		return this.generateToken(user);
 	}
@@ -98,5 +101,14 @@ export class UserService {
 
 		return { user: user };
 
+	}
+
+	async savePublication(id: string, publicationId: string) {
+		const user = await this.userModel.findById(id);
+		if (!user) {
+			throw new NotFoundException(`User with id ${id} not found`);
+		}
+		user.saved.push(new Types.ObjectId(publicationId));
+		return user.save();
 	}
 }

@@ -14,9 +14,11 @@ import { SubCategoryModule } from './sub-category/sub-category.module';
 import { PublicationModule } from './publication/publication.module';
 import { AvatarGeneratorModule } from './avatar-generator/avatar-generator.module';
 import { AuthorModule } from './author/author.module';
+import { SchoolTypeModule } from './school-type/school-type.module';
 
 @Module({
-	imports: [ConfigModule.forRoot(),
+	imports: [
+		ConfigModule.forRoot(),
 		MongooseModule.forRootAsync({
 			imports: [ConfigModule],
 			inject: [ConfigService],
@@ -32,6 +34,7 @@ import { AuthorModule } from './author/author.module';
 		PublicationModule,
 		AvatarGeneratorModule,
 		AuthorModule,
+		SchoolTypeModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],

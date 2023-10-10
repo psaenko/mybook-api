@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { SchoolDocument, School } from './school.schema';
@@ -6,13 +6,39 @@ import { UpdateSchoolDto } from './dto/update.dto';
 import { CreateSchoolDto } from './dto/create.dto';
 import {NOT_FOUND_ERROR, ALREADY_EXIST_ERROR} from './school.constants'
 
+const PAGE_LIMIT = 10;
+
 @Injectable()
 export class SchoolService {
+	private logger = new Logger('CityService');
 	constructor(@InjectModel(School.name) private schoolModel: Model<SchoolDocument>) {
 	}
 
-	async findAll() {
-		return this.schoolModel.find();
+	private getSkip(page: number): number {
+		return (page - 1) * PAGE_LIMIT;
+	}
+
+	async findAll(isShow?: boolean, page: number = 1) {
+		const skip = this.getSkip(page);
+		const query = isShow !== undefined ? { isShow } : {};
+		const [total, data] = await Promise.all([
+			this.schoolModel.countDocuments(query),
+			this.schoolModel.find(query).skip(skip).limit(PAGE_LIMIT)
+				.populate('type', 'name -_id')
+				.populate('city', 'name -_id')
+		]);
+		this.logger.log(`Finding all schools with isShow: ${isShow} and page: ${page}`);
+		return {
+			data,
+			total,
+			totalPages: Math.ceil(total / PAGE_LIMIT),
+		};
+	}
+
+	async findAllList(isShow?: boolean){
+		const query = isShow !== undefined ? { isShow } : {};
+		this.logger.log(`Finding all cities list with isShow: ${isShow}`);
+		return this.schoolModel.find(query).exec();
 	}
 
 	async findById(id: string) {

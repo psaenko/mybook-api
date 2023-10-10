@@ -18,7 +18,7 @@ export class AuthService {
 	async login(user: any) {
 		const { role, id, fullName } = user.user;
 		const { name } = await this.roleService.findOne(role);
-		const token = await this.jwtService.signAsync({ id });
+		const token = await this.jwtService.signAsync({ id, role: name });
 		return { token, role: name, fullName, id };
 	}
 
@@ -35,7 +35,7 @@ export class AuthService {
 		});
 		const { role, id, fullName } = userRecord;
 		const { name } = await this.roleService.findOne(role);
-		const token = await this.jwtService.signAsync({ id });
+		const token = await this.jwtService.signAsync({ id, role: name });
 		res.redirect(`${process.env.CLIENT_URL}/cabinet/${token}`);
 		return { token, role: name, fullName, _id:id };
 	}

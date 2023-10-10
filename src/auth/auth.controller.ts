@@ -15,11 +15,7 @@ import { LoginDto } from './dto/login.dto';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 import { ApiBearerAuth, ApiProperty, ApiTags } from '@nestjs/swagger';
-import { Roles } from '../decorators/roles.decorator';
-import { RolesGuard } from '../guards/roles.guard';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { ApiRoles } from '../decorators/api-roles.decorator';
-import { AuthGuard } from '@nestjs/passport';
 import { GoogleAuthGuard } from '../guards/google-auth.guard';
 
 @ApiTags('Auth')
@@ -43,7 +39,6 @@ export class AuthController {
 	}
 
 	@ApiBearerAuth()
-	@UseGuards(JwtAuthGuard)
 	@ApiRoles('All ROLES')
 	@Get()
 	async getUserInfo(@Headers('authorization') authHeader: string) {

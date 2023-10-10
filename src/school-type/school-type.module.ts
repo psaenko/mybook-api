@@ -1,17 +1,17 @@
 import { Module } from '@nestjs/common';
-import { RoleService } from './role.service';
-import { RoleController } from './role.controller';
+import { SchoolTypeService } from './school-type.service';
+import { SchoolTypeController } from './school-type.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Role, RoleSchema } from './role.schema';
+import { SchoolType, SchoolTypeSchema } from './school-type.schema';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { getJWTConfig } from '../configs/jwt.config';
 
 @Module({
-	controllers: [RoleController],
-	providers: [RoleService],
+	controllers: [SchoolTypeController],
+	providers: [SchoolTypeService],
 	imports: [MongooseModule.forFeature([
-		{ name: Role.name, schema: RoleSchema },
+		{ name: SchoolType.name, schema: SchoolTypeSchema },
 	]),
 		JwtModule.registerAsync({
 			imports: [ConfigModule],
@@ -19,7 +19,7 @@ import { getJWTConfig } from '../configs/jwt.config';
 			useFactory: getJWTConfig,
 		}),
 	],
-	exports: [RoleService]
+	exports: [SchoolTypeService, MongooseModule]
 })
-export class RoleModule {
+export class SchoolTypeModule {
 }

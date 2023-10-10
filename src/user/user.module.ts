@@ -11,7 +11,8 @@ import { AvatarGeneratorModule } from '../avatar-generator/avatar-generator.modu
 
 @Module({
 	controllers: [UserController],
-	imports: [MongooseModule.forFeature(
+	imports: [
+		MongooseModule.forFeature(
 		[{ name: User.name, schema: UserSchema }]),
 		JwtModule.registerAsync({
 			imports: [ConfigModule],
@@ -19,7 +20,12 @@ import { AvatarGeneratorModule } from '../avatar-generator/avatar-generator.modu
 			useFactory: getJWTConfig,
 		}),
 		RoleModule,
-		AvatarGeneratorModule
+		AvatarGeneratorModule,
+		JwtModule.registerAsync({
+			imports: [ConfigModule],
+			inject: [ConfigService],
+			useFactory: getJWTConfig,
+		}),
 	],
 	providers: [UserService],
 	exports: [UserService],

@@ -17,9 +17,9 @@ import { CityService } from './city.service';
 import { CreateDto, UpdateDto } from './dto/city.dto';
 import { ApiParam, ApiQuery, ApiBearerAuth, ApiOperation,ApiTags, ApiResponse } from '@nestjs/swagger';
 import { ALREADY_EXIST_ERROR } from './city.constants';
-import { Roles } from '../decorators/roles.decorator';
+import { Roles } from '../decorators/roles-auth.decorator';
 import { ApiRoles } from '../decorators/api-roles.decorator';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { RolesGuard } from '../guards/roles.guard';
 
 @ApiTags('City')
 @Controller('city')
@@ -36,7 +36,6 @@ export class CityController {
 	@ApiResponse({ status: 403, description: 'Forbidden.' })
 	@Roles('ADMIN')
 	@ApiRoles('ADMIN')
-	@UseGuards(JwtAuthGuard)
 	@Post()
 	@UsePipes(new ValidationPipe())
 	async create(@Body() createDto: CreateDto) {
@@ -56,7 +55,7 @@ export class CityController {
 	@ApiParam({ name: 'page', required: true, type: Number, example: 1 })
 	@Roles('ADMIN')
 	@ApiRoles('ADMIN')
-	@UseGuards(JwtAuthGuard)
+	@UseGuards(RolesGuard)
 	@Get()
 	async findAll(
 		@Query('isShow') isShow: boolean,
@@ -69,7 +68,7 @@ export class CityController {
 	@ApiQuery({ name: 'isShow', type: Boolean, required: true, example: [true, false] })
 	@ApiOperation({ summary: 'Get list of all cities' })
 	@ApiResponse({ status: 200, description: 'Returns the list of all cities.' })
-	@ApiRoles('ALL ROLES')
+	@Roles('ALL ROLES')
 	@Get('list')
 	async findAllList(@Query('isShow') isShow: boolean) {
 		this.logger.log(`Getting all cities list with isShow: ${isShow}`);
@@ -84,7 +83,7 @@ export class CityController {
 	@ApiResponse({ status: 404, description: 'City not found.' })
 	@Roles('ADMIN')
 	@ApiRoles('ADMIN')
-	@UseGuards(JwtAuthGuard)
+	@UseGuards(RolesGuard)
 	@Get(':id')
 	async findById(@Param('id') id: string) {
 		this.logger.log(`Getting city by id: ${id}`);
@@ -104,7 +103,7 @@ export class CityController {
 	@ApiResponse({ status: 404, description: 'City not found.' })
 	@Roles('ADMIN')
 	@ApiRoles('ADMIN')
-	@UseGuards(JwtAuthGuard)
+	@UseGuards(RolesGuard)
 	@Put(':id')
 	async update(@Param('id') id: string, @Body() updateDto: UpdateDto) {
 		this.logger.log(`Updating city with id: ${id}`);
@@ -119,7 +118,7 @@ export class CityController {
 	@ApiResponse({ status: 404, description: 'City not found.' })
 	@Roles('ADMIN')
 	@ApiRoles('ADMIN')
-	@UseGuards(JwtAuthGuard)
+	@UseGuards(RolesGuard)
 	@Delete(':id')
 	async remove(@Param('id') id: string) {
 		this.logger.log(`Deleting city with id: ${id}`);

@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Author, AuthorDocument } from './author.schema';
 import { CreateDto, UpdateDto } from './dto/author.dto';
-import { ALREADY_EXIST_ERROR, NOT_FOUND_ERROR } from './city.constants';
+import { ALREADY_EXIST_ERROR, NOT_FOUND_ERROR } from '../auth/author.constants';
 
 const PAGE_LIMIT = 10;
 

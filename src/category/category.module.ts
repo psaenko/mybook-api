@@ -3,14 +3,22 @@ import { CategoryService } from './category.service';
 import { CategoryController } from './category.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Category, CategorySchema } from './category.schema';
-import { JwtService } from '@nestjs/jwt';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { JwtModule, JwtService } from '@nestjs/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { getJWTConfig } from '../configs/jwt.config';
 
 @Module({
-  controllers: [CategoryController],
-  providers: [CategoryService, JwtService, JwtAuthGuard],
-  imports: [MongooseModule.forFeature([
-    { name: Category.name, schema: CategorySchema },
-  ])],
+	controllers: [CategoryController],
+	providers: [CategoryService],
+	imports: [MongooseModule.forFeature([
+		{ name: Category.name, schema: CategorySchema },
+	]),
+		JwtModule.registerAsync({
+			imports: [ConfigModule],
+			inject: [ConfigService],
+			useFactory: getJWTConfig,
+		}),
+	],
 })
-export class CategoryModule {}
+export class CategoryModule {
+}

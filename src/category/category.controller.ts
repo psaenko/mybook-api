@@ -10,12 +10,15 @@ import {
 	BadRequestException,
 	Query,
 	Put,
-	Logger,
+	Logger, UseGuards,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateDto, UpdateDto } from './dto/category.dto';
 import { ALREADY_EXIST_ERROR } from './category.constants';
-import { ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Roles } from '../decorators/roles-auth.decorator';
+import { ApiRoles } from '../decorators/api-roles.decorator';
+import { RolesGuard } from '../guards/roles.guard';
 
 @ApiTags('Category')
 @Controller('category')
@@ -25,7 +28,14 @@ export class CategoryController {
 	constructor(private readonly categoryService: CategoryService) {
 	}
 
+	@ApiBearerAuth()
 	@UsePipes(new ValidationPipe())
+	@ApiOperation({ summary: 'Creating new category' })
+	@ApiResponse({ status: 200, description: 'Returns nwe category info.' })
+	@ApiResponse({ status: 403, description: 'Forbidden.' })
+	@ApiRoles('ADMIN')
+	@Roles('ADMIN')
+	@UseGuards(RolesGuard)
 	@Post()
 	async createCategory(@Body() createDto: CreateDto) {
 		const existingCategory = await this.categoryService.findByName(createDto.name);
@@ -36,13 +46,26 @@ export class CategoryController {
 		return this.categoryService.create(createDto);
 	}
 
+	@ApiBearerAuth()
+	@ApiOperation({ summary: 'Get all categories' })
+	@ApiResponse({ status: 200, description: 'Returns the list of all categories.' })
+	@ApiResponse({ status: 403, description: 'Forbidden.' })
+	@ApiQuery({ name: 'isShow', type: Boolean, required: true, example: [true, false] })
+	@ApiRoles('ALL ROLES')
 	@Get()
 	async getAllCategories(@Query('isShow') isShow: boolean) {
 		this.logger.log(`Getting all categories with isShow: ${isShow}`);
 		return this.categoryService.findAll(isShow);
 	}
 
-	@ApiParam({ name: 'id', required: true, example: '6512f25c770624afefed1293' })
+	@ApiBearerAuth()
+	@ApiOperation({ summary: 'Get category by id' })
+	@ApiResponse({ status: 200, description: 'Returns one category.' })
+	@ApiResponse({ status: 403, description: 'Forbidden.' })
+	@ApiParam({ name: '_id', required: true, type: Number, example: '6512f25c770624afefed1293' })
+	@ApiRoles('ADMIN')
+	@Roles('ADMIN')
+	@UseGuards(RolesGuard)
 	@Get(':id')
 	async findById(@Param('id') id: string) {
 		this.logger.log(`Getting category by id: ${id}`);
@@ -54,14 +77,28 @@ export class CategoryController {
 		}
 	}
 
-	@ApiParam({ name: 'id', required: true, example: '6512f25c770624afefed1293' })
+	@ApiBearerAuth()
+	@ApiOperation({ summary: 'Update category' })
+	@ApiResponse({ status: 200, description: 'Returns the updated category.' })
+	@ApiResponse({ status: 403, description: 'Forbidden.' })
+	@ApiParam({ name: 'page', required: true, type: Number, example: '6512f25c770624afefed1293' })
+	@ApiRoles('ADMIN')
+	@Roles('ADMIN')
+	@UseGuards(RolesGuard)
 	@Put(':id')
 	async updateCategory(@Param('id') id: string, @Body() updateDto: UpdateDto) {
 		this.logger.log(`Updating category with id: ${id}`);
 		return this.categoryService.update(id, updateDto.isShow);
 	}
 
-	@ApiParam({ name: 'id', required: true, example: '6512f25c770624afefed1293' })
+	@ApiBearerAuth()
+	@ApiOperation({ summary: 'Delete category' })
+	@ApiResponse({ status: 200, description: 'Ok' })
+	@ApiResponse({ status: 403, description: 'Forbidden.' })
+	@ApiParam({ name: 'page', required: true, type: Number, example: '6512f25c770624afefed1293' })
+	@ApiRoles('ADMIN')
+	@Roles('ADMIN')
+	@UseGuards(RolesGuard)
 	@Delete(':id')
 	async remove(@Param('id') id: string) {
 		this.logger.log(`Deleting category with id: ${id}`);

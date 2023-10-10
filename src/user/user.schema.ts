@@ -1,8 +1,9 @@
-import { HydratedDocument, Schema as MSchema } from 'mongoose';
+import { HydratedDocument, Schema as MSchema, Types } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { City } from '../city/city.schema';
 import { Role } from '../role/role.schema';
 import { School } from '../school/school.schema';
+import { Publication } from '../publication/publication.schema';
 
 export type UserDocument = HydratedDocument<User>
 
@@ -35,9 +36,11 @@ export class User {
 	@Prop({ type: Boolean, default: false })
 	withGoogle: boolean;
 
-
 	@Prop({ type: MSchema.Types.ObjectId, ref: 'Role', default: '6519a12cc60f1fcd95aa9aa2' })
 	role: Role;
+
+	@Prop({ type: [{ type: MSchema.Types.ObjectId, ref: 'Publication' }] })
+	saved: Types.ObjectId[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

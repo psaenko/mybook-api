@@ -2,14 +2,14 @@ import { Controller, Get, Post, Body, Put, Param, Delete, ParseIntPipe, Query, U
 import { AuthorService } from './author.service';
 import { CreateDto, UpdateDto } from './dto/author.dto';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Roles } from '../decorators/roles.decorator';
-import { ApiRoles } from '../decorators/api-roles.decorator';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { Roles } from '../decorators/roles-auth.decorator';
+import { RolesGuard } from '../guards/roles.guard';
 
 @ApiTags('Author')
 @Controller('author')
 export class AuthorController {
-	constructor(private readonly authorService: AuthorService) {}
+	constructor(private readonly authorService: AuthorService) {
+	}
 
 	@ApiBearerAuth()
 	@ApiOperation({ summary: 'Create a new author' })
@@ -17,22 +17,19 @@ export class AuthorController {
 	@ApiResponse({ status: 400, description: 'Author already exists or invalid data.' })
 	@ApiResponse({ status: 403, description: 'Forbidden.' })
 	@Roles('ADMIN')
-	@ApiRoles('ADMIN')
-	@UseGuards(JwtAuthGuard)
+	@UseGuards(RolesGuard)
 	@Post()
 	create(@Body() createDto: CreateDto) {
 		return this.authorService.create(createDto);
 	}
 
-	@ApiBearerAuth()
-	@ApiOperation({ summary: 'Get all cities' })
+	@ApiOperation({ summary: 'Get all authors' })
 	@ApiResponse({ status: 200, description: 'Returns the list of all authors.' })
 	@ApiResponse({ status: 403, description: 'Forbidden.' })
 	@ApiQuery({ name: 'isShow', type: Boolean, required: true, example: [true, false] })
 	@ApiParam({ name: 'page', required: true, type: Number, example: 1 })
 	@Roles('ADMIN')
-	@ApiRoles('ADMIN')
-	@UseGuards(JwtAuthGuard)
+	@UseGuards(RolesGuard)
 	@Get()
 	async findAll(@Query('page', new ParseIntPipe()) page: number) {
 		return this.authorService.findAll(page);
@@ -45,8 +42,7 @@ export class AuthorController {
 	@ApiResponse({ status: 403, description: 'Forbidden.' })
 	@ApiResponse({ status: 404, description: 'Author not found.' })
 	@Roles('ADMIN')
-	@ApiRoles('ADMIN')
-	@UseGuards(JwtAuthGuard)
+	@UseGuards(RolesGuard)
 	@Get(':id')
 	findById(@Param('id') id: string) {
 		return this.authorService.findById(id);
@@ -59,10 +55,9 @@ export class AuthorController {
 	@ApiResponse({ status: 403, description: 'Forbidden.' })
 	@ApiResponse({ status: 404, description: 'Author not found.' })
 	@Roles('ADMIN')
-	@ApiRoles('ADMIN')
-	@UseGuards(JwtAuthGuard)
+	@UseGuards(RolesGuard)
 	@Put(':id')
-	update(@Param('id') id: string, @Body() updateDto:UpdateDto) {
+	update(@Param('id') id: string, @Body() updateDto: UpdateDto) {
 		return this.authorService.update(id, updateDto);
 	}
 
@@ -73,8 +68,7 @@ export class AuthorController {
 	@ApiResponse({ status: 403, description: 'Forbidden.' })
 	@ApiResponse({ status: 404, description: 'Author not found.' })
 	@Roles('ADMIN')
-	@ApiRoles('ADMIN')
-	@UseGuards(JwtAuthGuard)
+	@UseGuards(RolesGuard)
 	@Delete(':id')
 	remove(@Param('id') id: string) {
 		return this.authorService.remove(id);

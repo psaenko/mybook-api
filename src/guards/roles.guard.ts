@@ -1,27 +1,49 @@
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import {
+	CanActivate,
+	ExecutionContext,
+	HttpException,
+	HttpStatus,
+	Injectable,
+	UnauthorizedException,
+} from '@nestjs/common';
+import { Observable } from 'rxjs';
+import { JwtService } from '@nestjs/jwt';
 import { Reflector } from '@nestjs/core';
-import { ROLES_KEY } from '../decorators/roles.decorator';
-import { UserService } from '../user/user.service';
+import { ROLES_KEY } from '../decorators/roles-auth.decorator';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-	constructor(
-		private reflector: Reflector,
-		private userService: UserService
-	) {}
-
-	async canActivate(context: ExecutionContext): Promise<boolean> {
-		const requiredRoles = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
-			context.getHandler(),
-			context.getClass(),
-		]);
-		if (!requiredRoles) {
-			return true;
-		}
-		const request = context.switchToHttp().getRequest();
-		const { user } = request;
-		const { id } = user;
-		const userRole = await this.userService.findRoleById(id);
-		return requiredRoles.some(role => userRole.name.includes(role));
+	constructor(private jwtService: JwtService,
+							private reflector: Reflector,
+	) {
 	}
+
+	canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+		try {
+			const requiredRoles = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
+				context.getHandler(),
+				context.getClass(),
+			]);
+			if (!requiredRoles) {
+				return true;
+			}
+
+			const req = context.switchToHttp().getRequest();
+			const authHeader = req.headers.authorization;
+			const bearer = authHeader.split(' ')[0];
+			const token = authHeader.split(' ')[1];
+
+			if (bearer !== 'Bearer' || !token) {
+				throw new UnauthorizedException({ message: 'Пользователь не авторизован' });
+			}
+
+			const user = this.jwtService.verify(token);
+			req.user = user;
+			return requiredRoles.includes(user.role);
+		} catch (e) {
+			console.log(e);
+			throw new HttpException('Нет доступа', HttpStatus.FORBIDDEN);
+		}
+	}
+
 }
