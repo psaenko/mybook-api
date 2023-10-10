@@ -26,12 +26,10 @@ export class UserController {
 	}
 
 	@ApiBearerAuth()
-	@ApiOperation({ summary: 'Create a new user' })
+	@ApiOperation({ summary: 'Create a new user (register)' })
 	@ApiResponse({ status: 201, description: 'The user has been successfully created.' })
 	@ApiResponse({ status: 400, description: 'User already exists or invalid data.' })
-	@ApiRoles('ADMIN')
-	@Roles('ADMIN')
-	@UseGuards(RolesGuard)
+	@ApiRoles('ALL ROLES')
 	@Post()
 	@UsePipes(new ValidationPipe())
 	async create(@Body() createDto: CreateDto) {
