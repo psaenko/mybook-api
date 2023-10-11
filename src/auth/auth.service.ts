@@ -46,8 +46,8 @@ export class AuthService {
 			const decodedToken = this.jwtService.verify(token);
 			const userId = decodedToken.id;
 			const user = await this.userService.findById(userId)
-				.populate('city', 'name -_id')
-				.populate('school', 'name -_id')
+				.populate('city', 'name')
+				.populate('school', 'name')
 				.populate('role', 'name -_id')
 				.select('-passwordHash')
 				.exec();

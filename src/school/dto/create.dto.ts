@@ -9,12 +9,14 @@ export class CreateSchoolDto {
 	})
 	@IsString()
 	name: string;
+
 	@ApiProperty({
-		example: 'School',
+		example: '6512f25c770624afefed1293',
 		required: true
 	})
 	@IsString()
 	type: string;
+
 	@ApiProperty({
 		example: '6512f25c770624afefed1293',
 		required: true

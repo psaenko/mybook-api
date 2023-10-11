@@ -68,7 +68,7 @@ export class CityController {
 	@ApiQuery({ name: 'isShow', type: Boolean, required: true, example: [true, false] })
 	@ApiOperation({ summary: 'Get list of all cities' })
 	@ApiResponse({ status: 200, description: 'Returns the list of all cities.' })
-	@Roles('ALL ROLES')
+	@ApiRoles('ALL ROLES')
 	@Get('list')
 	async findAllList(@Query('isShow') isShow: boolean) {
 		this.logger.log(`Getting all cities list with isShow: ${isShow}`);

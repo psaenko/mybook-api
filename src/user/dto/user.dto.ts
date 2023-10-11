@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional } from 'class-validator';
+import { IsDate, IsOptional, IsString } from 'class-validator';
+import { Types } from 'mongoose';
 
 export class CreateDto {
 	@ApiProperty({
@@ -34,49 +35,41 @@ export class CreateDto {
 }
 
 export class UpdateDto {
-	@ApiProperty({
-		example: 'Саєнко Павло Сергійович',
-		required: true,
-	})
 	@IsOptional()
-	fullName: string;
+	@IsString()
+	fullName?: string;
 
-	@ApiProperty({
-		example: '6512f25c770624afefed1293',
-		required: true,
-	})
 	@IsOptional()
-	city: string;
+	@IsString()
+	login?: string;
 
-	@ApiProperty({
-		example: '6519a12cc60f1fcd95aa9aa2',
-		required: false,
-		default: '6519a12cc60f1fcd95aa9aa2',
-	})
 	@IsOptional()
-	role: string;
+	@IsString()
+	email?: string;
 
-	@ApiProperty({
-		example: '6519a12cc60f1fcd95aa9aa2',
-		required: false,
-		default: '6519a12cc60f1fcd95aa9aa2',
-	})
 	@IsOptional()
-	school: string;
+	@IsString()
+	city?: Types.ObjectId;
 
-	@ApiProperty({
-		example: '6519a12cc60f1fcd95aa9aa2',
-		required: false,
-		default: '6519a12cc60f1fcd95aa9aa2',
-	})
 	@IsOptional()
-	class: string;
+	@IsString()
+	school?: Types.ObjectId;
 
-	@ApiProperty({
-		example: '6519a12cc60f1fcd95aa9aa2',
-		required: false,
-		default: '6519a12cc60f1fcd95aa9aa2',
-	})
 	@IsOptional()
-	avatar: string;
+	@IsString()
+	avatar?: string;
+
+	@IsOptional()
+	@IsDate()
+	birthdayDate?: Date;
+}
+
+export class ChangePasswordDto {
+
+	@IsOptional()
+	@IsString()
+	oldPassword?: string;
+
+	@IsString()
+	newPassword: string;
 }

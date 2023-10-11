@@ -36,6 +36,9 @@ export class User {
 	@Prop({ type: Boolean, default: false })
 	withGoogle: boolean;
 
+	@Prop({ type: Date })
+	birthdayDate: Date;
+
 	@Prop({ type: MSchema.Types.ObjectId, ref: 'Role', default: '6519a12cc60f1fcd95aa9aa2' })
 	role: Role;
 

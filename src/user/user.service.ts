@@ -1,16 +1,14 @@
-import { Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './user.schema';
 import { Model, Types } from 'mongoose';
-import { CreateDto, UpdateDto } from './dto/user.dto';
+import { CreateDto, UpdateDto, ChangePasswordDto } from './dto/user.dto';
 import { compare, genSalt, hash } from 'bcrypt';
 import { USER_NOT_FOUND_ERROR, WRONG_PASSWORD_ERROR } from '../auth/auth.constants';
 import { JwtService } from '@nestjs/jwt';
 import { RoleService } from '../role/role.service';
 import { LoginDto } from '../auth/dto/login.dto';
 import { AvatarGeneratorService } from '../avatar-generator/avatar-generator.service';
-import { ObjectId } from 'mongodb';
-import any = jasmine.any;
 
 const PAGE_LIMIT = 10;
 
@@ -110,5 +108,73 @@ export class UserService {
 		}
 		user.saved.push(new Types.ObjectId(publicationId));
 		return user.save();
+	}
+
+	async isLoginUnique(login: string): Promise<boolean> {
+		const user = await this.userModel.findOne({ login });
+		return !user;
+	}
+
+	async isEmailUnique(email: string): Promise<boolean> {
+		const user = await this.userModel.findOne({ email });
+		return !user;
+	}
+
+	async update(id: string, updateDto: UpdateDto): Promise<UserDocument> {
+		const { login, email, ...rest } = updateDto;
+
+		if (login && !(await this.isLoginUnique(login))) {
+			throw new BadRequestException('Логін зайнятий');
+		}
+
+		if (email && !(await this.isEmailUnique(email))) {
+			throw new BadRequestException('Пошта вже використовується');
+		}
+
+		const user = await this.userModel.findByIdAndUpdate(
+			id,
+			{ login, email, ...rest },
+			{ new: true }
+		);
+
+		if (!user) {
+			throw new NotFoundException(`User with id ${id} not found`);
+		}
+
+		return user
+	}
+
+	async changePassword(id: string, changePasswordDto: ChangePasswordDto){
+		const user = await this.userModel.findById(id);
+		console.log(user)
+		if (!user) {
+			throw new NotFoundException(`User with id ${id} not found`);
+		}
+
+		const { oldPassword, newPassword } = changePasswordDto;
+
+		if (user.passwordHash && !(await compare(oldPassword, user.passwordHash))) {
+			throw new BadRequestException('Incorrect old password');
+		}
+
+		const salt = await genSalt(10);
+		const passwordHash = await hash(newPassword, salt);
+		user.passwordHash = passwordHash;
+		return user.save();
+	}
+
+	async getSavedPublications(userId: string) {
+		console.log(userId)
+		const user = await this.userModel
+			.findById(userId)
+			.populate({
+				path: 'saved',
+				model: 'Publication',
+			})
+			.exec();
+		if (!user) {
+			throw new NotFoundException(`User with id ${userId} not found`);
+		}
+		return user.saved;
 	}
 }

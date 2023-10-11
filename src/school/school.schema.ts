@@ -12,6 +12,10 @@ export class School {
 	@Prop({ required: true })
 	name: string;
 
+	@ApiProperty({required: false, example: [true, false]})
+	@Prop({ required: false, default: true })
+	isShow: boolean;
+
 	@ApiProperty({required: true, example: '6512f25c770624afefed1293'})
 	@Prop({ required: true, type: MSchema.Types.ObjectId, ref: 'SchoolType' })
 	type: SchoolType;
