@@ -103,7 +103,6 @@ export class PublicationController {
 
 	}
 
-
 	@ApiOperation({ summary: 'Add file from publication' })
 	@ApiResponse({ status: 200, description: 'Returns list of files from publication.' })
 	@ApiResponse({ status: 403, description: 'Forbidden.' })
