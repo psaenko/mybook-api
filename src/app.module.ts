@@ -15,6 +15,7 @@ import { PublicationModule } from './publication/publication.module';
 import { AvatarGeneratorModule } from './avatar-generator/avatar-generator.module';
 import { AuthorModule } from './author/author.module';
 import { SchoolTypeModule } from './school-type/school-type.module';
+import { GroupModule } from './group/group.module';
 
 @Module({
 	imports: [
@@ -35,6 +36,7 @@ import { SchoolTypeModule } from './school-type/school-type.module';
 		AvatarGeneratorModule,
 		AuthorModule,
 		SchoolTypeModule,
+		GroupModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],
