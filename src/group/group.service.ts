@@ -56,7 +56,7 @@ export class GroupService {
 			query.isShow = {};
 		}
 		this.logger.log(`Finding all group list with isShow: ${isShow}`);
-		return this.groupModel.find(query).populate('categories', 'name').exec();
+		return this.groupModel.findOne(query).populate('categories', 'name');
 	}
 
 	async findById(id: string) {
