@@ -19,7 +19,7 @@ export class AuthService {
 		const { role, id, fullName } = user.user;
 		const { name } = await this.roleService.findOne(role);
 		const token = await this.jwtService.signAsync({ id, role: name });
-		return { token, role: name, fullName, id };
+		return { token, role: name, fullName, _id: id };
 	}
 
 	async loginWithGoogle(user: any, @Res() res) {

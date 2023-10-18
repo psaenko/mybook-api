@@ -34,7 +34,7 @@ export class RolesGuard implements CanActivate {
 			const token = authHeader.split(' ')[1];
 
 			if (bearer !== 'Bearer' || !token) {
-				throw new UnauthorizedException({ message: 'Користувач не авторизован' });
+				throw new UnauthorizedException({ message: 'Відсуній токен' });
 			}
 
 			const user = this.jwtService.verify(token);
