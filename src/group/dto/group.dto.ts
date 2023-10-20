@@ -30,4 +30,13 @@ export class GroupDto {
 	@IsBoolean()
 	@IsOptional()
 	isShow: boolean;
+
+	@ApiProperty({
+		example: '#ffffff',
+		default: '#ffffff',
+		required: false
+	})
+	@IsString()
+	@IsOptional()
+	hex: string;
 }

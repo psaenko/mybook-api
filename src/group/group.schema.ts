@@ -14,6 +14,9 @@ export class Group {
 	@Prop({ required: false, default: true })
 	isShow: boolean;
 
+	@Prop({ required: false, default: '#ffffff' })
+	hex: boolean;
+
 	@Prop({ type: [{ type: MSchema.ObjectId, ref: 'Category' }] })
 	categories: Types.ObjectId[];
 }
