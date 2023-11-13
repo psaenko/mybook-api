@@ -21,4 +21,4 @@ export class Group {
 	categories: Types.ObjectId[];
 }
 
-export const GroupSchema = SchemaFactory.createForClass(Group);
+export const GroupModel = SchemaFactory.createForClass(Group);

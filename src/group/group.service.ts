@@ -1,13 +1,13 @@
 import { Injectable, NotFoundException, Logger, Get, Query } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Group, GroupDocument } from './group.schema';
+import { Group, GroupDocument } from './group.model';
 import { GroupDto } from './dto/group.dto';
-import { SubCategory, SubCategoryDocument } from '../sub-category/sub-category.schema';
+import { SubCategory, SubCategoryDocument } from '../sub-category/sub-category.model';
 import { PublicationService } from '../publication/publication.service';
 import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { ApiRoles } from '../decorators/api-roles.decorator';
-import { CityDocument } from '../city/city.schema';
+import { CityDocument } from '../city/city.model';
 import any = jasmine.any;
 
 const PAGE_LIMIT = 10;

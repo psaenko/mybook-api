@@ -16,4 +16,4 @@ export class Role {
 	description: string;
 }
 
-export const RoleSchema = SchemaFactory.createForClass(Role);
+export const RoleModel = SchemaFactory.createForClass(Role);

@@ -1,8 +1,8 @@
 import { HydratedDocument, Schema as MSchema } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { City } from '../city/city.schema';
+import { City } from '../city/city.model';
 import { ApiProperty } from '@nestjs/swagger';
-import { SchoolType } from '../school-type/school-type.schema';
+import { SchoolType } from '../school-type/school-type.model';
 
 export type SchoolDocument = HydratedDocument<School>
 
@@ -25,4 +25,4 @@ export class School {
 	city: City;
 }
 
-export const SchoolSchema = SchemaFactory.createForClass(School);
+export const SchoolModel = SchemaFactory.createForClass(School);

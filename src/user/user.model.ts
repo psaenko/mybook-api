@@ -1,9 +1,9 @@
 import { HydratedDocument, Schema as MSchema, Types } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { City } from '../city/city.schema';
-import { Role } from '../role/role.schema';
-import { School } from '../school/school.schema';
-import { Publication } from '../publication/publication.schema';
+import { City } from '../city/city.model';
+import { Role } from '../role/role.model';
+import { School } from '../school/school.model';
+import { Publication } from '../publication/publication.model';
 
 export type UserDocument = HydratedDocument<User>
 
@@ -30,6 +30,9 @@ export class User {
 	@Prop({ type: MSchema.Types.ObjectId, ref: 'School' })
 	school: School;
 
+	@Prop({ default: null })
+	class: number;
+
 	@Prop()
 	avatar: string;
 
@@ -46,4 +49,4 @@ export class User {
 	saved: Types.ObjectId[];
 }
 
-export const UserSchema = SchemaFactory.createForClass(User);
+export const UserModel = SchemaFactory.createForClass(User);

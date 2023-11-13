@@ -16,4 +16,4 @@ export class SchoolType {
 	description: string;
 }
 
-export const SchoolTypeSchema = SchemaFactory.createForClass(SchoolType);
+export const SchoolTypeModel = SchemaFactory.createForClass(SchoolType);

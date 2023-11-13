@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Author, AuthorDocument } from './author.schema';
+import { Author, AuthorDocument } from './author.model';
 import { CreateDto, UpdateDto } from './dto/author.dto';
-import { ALREADY_EXIST_ERROR, NOT_FOUND_ERROR } from '../auth/author.constants';
+import { ALREADY_EXIST_ERROR, NOT_FOUND_ERROR } from './author.constants';
 
 const PAGE_LIMIT = 10;
 
@@ -37,6 +37,11 @@ export class AuthorService {
 			total,
 			totalPages: Math.ceil(total / PAGE_LIMIT),
 		};
+	}
+	async findAllActive() {
+		const data = this.authorModel.find();
+		this.logger.log(`Finding all active authors`);
+		return data
 	}
 
 	async findById(id: string) {

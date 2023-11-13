@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Schema as MSchema } from 'mongoose';
-import { Category } from '../category/category.schema';
+import { Category } from '../category/category.model';
 import { ApiProperty } from '@nestjs/swagger';
 
 export type SubCategoryDocument = HydratedDocument<SubCategory>
@@ -21,4 +21,4 @@ export class SubCategory {
 	mainCategory: Category;
 }
 
-export const SubCategorySchema = SchemaFactory.createForClass(SubCategory);
+export const SubCategoryModel = SchemaFactory.createForClass(SubCategory);

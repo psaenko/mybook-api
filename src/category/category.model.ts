@@ -1,10 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Document } from 'mongoose';
+import { HydratedDocument } from 'mongoose';
 
-export type CityDocument = HydratedDocument<City> & Document
+export type CategoryDocument = HydratedDocument<Category>
 
 @Schema({ timestamps: true })
-export class City {
+export class Category {
 	@Prop({ required: true, unique: true })
 	name: string;
 
@@ -12,4 +12,4 @@ export class City {
 	isShow: boolean;
 }
 
-export const CitySchema = SchemaFactory.createForClass(City);
+export const CategoryModel = SchemaFactory.createForClass(Category);

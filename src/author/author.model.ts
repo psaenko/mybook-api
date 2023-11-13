@@ -8,4 +8,4 @@ export class Author {
 }
 
 export type AuthorDocument = Author & Document;
-export const AuthorSchema = SchemaFactory.createForClass(Author);
+export const AuthorModel = SchemaFactory.createForClass(Author);

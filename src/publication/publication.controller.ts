@@ -60,8 +60,8 @@ export class PublicationController {
 	@ApiOperation({ summary: 'Get all publications from category' })
 	@ApiResponse({ status: 200, description: 'Returns the list of all publications.' })
 	@ApiResponse({ status: 403, description: 'Forbidden.' })
-	@ApiParam({ name: 'categoryId', required: true, example: '6512f25c770624afefed1293' })
-	@ApiQuery({ name: 'author', required: false, example: '6512f25c770624afefed1293' })
+	@ApiQuery({ name: 'authors', required: false, isArray: true, type: String }) // массив ID авторов
+	@ApiQuery({ name: 'hasFiles', type: Boolean, required: false }) // параметр для проверки наличия файлов
 	@ApiQuery({ name: 'startYear', required: false, example: 2010 })
 	@ApiQuery({ name: 'endYear', required: false, example: 2020 })
 	@ApiQuery({ name: 'isShow', type: Boolean, required: true, example: [true, false] })
@@ -70,19 +70,19 @@ export class PublicationController {
 	@Get('category/:categoryId')
 	async findAllByCategory(
 		@Param('categoryId') categoryId: string,
-		@Query('author') author: string,
+		@Query('authors') authors: string[],
 		@Query('startYear') startYear: number,
 		@Query('endYear') endYear: number,
+		@Query('hasFiles') hasFiles: boolean,
 		@Query('isShow') isShow: boolean,
-		@Query('page') page: number,
 	) {
 		return this.publicationService.findAllByCategory(
 			categoryId,
-			author,
+			authors,
 			startYear,
 			endYear,
+			hasFiles,
 			isShow,
-			page,
 		);
 	}
 
@@ -90,7 +90,7 @@ export class PublicationController {
 	@ApiResponse({ status: 200, description: 'Returns one publication.' })
 	@ApiResponse({ status: 403, description: 'Forbidden.' })
 	@ApiParam({ name: 'id', required: true, example: '6512f25c770624afefed1293' })
-	@ApiRoles("ALL ROLES")
+	@ApiRoles('ALL ROLES')
 	@Get(':id')
 	async findById(@Param('id') id: string) {
 		this.logger.log(`Getting publication by id: ${id}`);

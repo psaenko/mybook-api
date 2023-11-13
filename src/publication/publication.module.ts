@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { PublicationService } from './publication.service';
 import { PublicationController } from './publication.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { SubCategory, SubCategorySchema } from '../sub-category/sub-category.schema';
-import { Publication, PublicationSchema } from './publication.schema';
+import { SubCategory, SubCategoryModel } from '../sub-category/sub-category.model';
+import { Publication, PublicationModel } from './publication.model';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { getJWTConfig } from '../configs/jwt.config';
@@ -12,8 +12,8 @@ import { getJWTConfig } from '../configs/jwt.config';
   providers: [PublicationService],
   controllers: [PublicationController],
   imports: [MongooseModule.forFeature([
-    { name: Publication.name, schema: PublicationSchema },
-    { name: SubCategory.name, schema: SubCategorySchema },
+    { name: Publication.name, schema: PublicationModel },
+    { name: SubCategory.name, schema: SubCategoryModel },
   ]),
     JwtModule.registerAsync({
       imports: [ConfigModule],

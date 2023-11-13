@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { RoleDto } from './dto/role.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Role, RoleDocument } from './role.schema';
+import { Role, RoleDocument } from './role.model';
 
 const PAGE_LIMIT = 10;
 

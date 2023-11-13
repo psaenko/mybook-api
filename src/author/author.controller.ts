@@ -35,6 +35,14 @@ export class AuthorController {
 		return this.authorService.findAll(page);
 	}
 
+	@ApiOperation({ summary: 'Get all active authors' })
+	@ApiResponse({ status: 200, description: 'Returns the list of all active authors.' })
+	@ApiResponse({ status: 403, description: 'Forbidden.' })
+	@Get('/list')
+	async findAllActive() {
+		return this.authorService.findAllActive();
+	}
+
 	@ApiBearerAuth()
 	@ApiParam({ name: 'id', required: true, example: '6512f25c770624afefed1293' })
 	@ApiOperation({ summary: 'Get a author by its id' })

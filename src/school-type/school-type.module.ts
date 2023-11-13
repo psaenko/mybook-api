@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { SchoolTypeService } from './school-type.service';
 import { SchoolTypeController } from './school-type.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { SchoolType, SchoolTypeSchema } from './school-type.schema';
+import { SchoolType, SchoolTypeModel } from './school-type.model';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { getJWTConfig } from '../configs/jwt.config';
@@ -11,7 +11,7 @@ import { getJWTConfig } from '../configs/jwt.config';
 	controllers: [SchoolTypeController],
 	providers: [SchoolTypeService],
 	imports: [MongooseModule.forFeature([
-		{ name: SchoolType.name, schema: SchoolTypeSchema },
+		{ name: SchoolType.name, schema: SchoolTypeModel },
 	]),
 		JwtModule.registerAsync({
 			imports: [ConfigModule],

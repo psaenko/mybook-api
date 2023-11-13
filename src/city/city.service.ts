@@ -1,7 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { City, CityDocument } from './city.schema';
+import { City, CityDocument } from './city.model';
 import { CreateDto, UpdateDto } from './dto/city.dto';
 
 const PAGE_LIMIT = 10;

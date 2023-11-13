@@ -1,6 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Author, AuthorSchema } from './author.schema';
+import { Author, AuthorModel } from './author.model';
 import { AuthorService } from './author.service';
 import { AuthorController } from './author.controller';
 import { getJWTConfig } from '../configs/jwt.config';
@@ -10,7 +10,7 @@ import { UserModule } from '../user/user.module';
 
 @Module({
 	imports: [
-		MongooseModule.forFeature([{ name: Author.name, schema: AuthorSchema }]),
+		MongooseModule.forFeature([{ name: Author.name, schema: AuthorModel }]),
 		JwtModule.registerAsync({
 			imports: [ConfigModule],
 			inject: [ConfigService],

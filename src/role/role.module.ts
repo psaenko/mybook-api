@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { RoleService } from './role.service';
 import { RoleController } from './role.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Role, RoleSchema } from './role.schema';
+import { Role, RoleModel } from './role.model';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { getJWTConfig } from '../configs/jwt.config';
@@ -11,7 +11,7 @@ import { getJWTConfig } from '../configs/jwt.config';
 	controllers: [RoleController],
 	providers: [RoleService],
 	imports: [MongooseModule.forFeature([
-		{ name: Role.name, schema: RoleSchema },
+		{ name: Role.name, schema: RoleModel },
 	]),
 		JwtModule.registerAsync({
 			imports: [ConfigModule],

@@ -1,7 +1,7 @@
 import { ConflictException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { SchoolDocument, School } from './school.schema';
+import { SchoolDocument, School } from './school.model';
 import { UpdateSchoolDto } from './dto/update.dto';
 import { CreateSchoolDto } from './dto/create.dto';
 import {NOT_FOUND_ERROR, ALREADY_EXIST_ERROR} from './school.constants'
@@ -10,7 +10,7 @@ const PAGE_LIMIT = 10;
 
 @Injectable()
 export class SchoolService {
-	private logger = new Logger('CityService');
+	private logger = new Logger('SchoolService');
 	constructor(@InjectModel(School.name) private schoolModel: Model<SchoolDocument>) {
 	}
 

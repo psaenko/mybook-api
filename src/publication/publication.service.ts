@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Publication, PublicationDocument } from './publication.schema';
+import { Publication, PublicationDocument } from './publication.model';
 import { PublicationDto } from './dto/publication.dto';
-import { SubCategory, SubCategoryDocument } from '../sub-category/sub-category.schema';
+import { SubCategory, SubCategoryDocument } from '../sub-category/sub-category.model';
 
 const PAGE_LIMIT = 10;
 
@@ -40,9 +40,10 @@ export class PublicationService {
 
 	async findAllByCategory(
 		mainCategoryId: string,
-		author?: string,
+		authors: string[], // массив ID авторов
 		startYear?: number,
 		endYear?: number,
+		hasFiles?: boolean, // новый параметр для проверки наличия файлов
 		isShow?: boolean,
 		page: number = 1,
 	) {
@@ -53,9 +54,18 @@ export class PublicationService {
 
 		const query: any = { category: { $in: subCategoryIds } };
 
-		if (author) {
-			query.author = author;
+		if (authors && authors.length > 0) {
+			query['authors'] = { $in: authors };
 		}
+
+		if (startYear && endYear) {
+			query['year'] = { $gte: startYear, $lte: endYear };
+		}
+
+		if (hasFiles !== undefined) {
+			query['files'] = hasFiles ? { $exists: true, $not: {$size: 0} } : { $size: 0 };
+		}
+
 		if (startYear && endYear) {
 			query.year = { $gte: startYear, $lte: endYear };
 		}

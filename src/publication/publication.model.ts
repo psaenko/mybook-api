@@ -1,6 +1,6 @@
 import { HydratedDocument, Schema as MSchema, Types } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { SubCategory } from '../sub-category/sub-category.schema';
+import { SubCategory } from '../sub-category/sub-category.model';
 
 export type PublicationDocument = HydratedDocument<Publication>
 
@@ -34,4 +34,4 @@ export class Publication {
 	files: string[];
 }
 
-export const PublicationSchema = SchemaFactory.createForClass(Publication);
+export const PublicationModel = SchemaFactory.createForClass(Publication);

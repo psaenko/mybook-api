@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument } from './user.schema';
+import { User, UserDocument } from './user.model';
 import { Model, Types } from 'mongoose';
 import { CreateDto, UpdateDto, ChangePasswordDto } from './dto/user.dto';
 import { compare, genSalt, hash } from 'bcrypt';
@@ -129,6 +129,10 @@ export class UserService {
 
 		if (email && !(await this.isEmailUnique(email))) {
 			throw new BadRequestException('Пошта вже використовується');
+		}
+
+		if (rest.birthdayDate) {
+			rest.birthdayDate = new Date(rest.birthdayDate)
 		}
 
 		const user = await this.userModel.findByIdAndUpdate(
