@@ -30,7 +30,6 @@ export class UserService {
 		const token = await this.jwtService.signAsync({ id, role: name });
 		return { token, role: name, fullName, id };
 	}
-
 	async create(createDto: CreateDto) {
 		const salt = await genSalt(10);
 		const passwordHash = await hash(createDto.password, salt);
@@ -42,11 +41,9 @@ export class UserService {
 		}).save();
 		return this.generateToken(user);
 	}
-
 	private getSkip(page: number): number {
 		return (page - 1) * PAGE_LIMIT;
 	}
-
 	async findAll(isShow?: boolean, page: number = 1) {
 		const skip = this.getSkip(page);
 		const query = isShow !== undefined ? { isShow } : {};
@@ -61,11 +58,9 @@ export class UserService {
 			totalPages: Math.ceil(total / PAGE_LIMIT),
 		};
 	}
-
 	findById(id: string): any {
 		return this.userModel.findById(id);
 	}
-
 	async findOrCreateUser(userDto: any): Promise<any> {
 		let user = await this.userModel.findOne({ email: userDto.email }).exec();
 		if (!user) {
@@ -73,19 +68,15 @@ export class UserService {
 		}
 		return user;
 	}
-
 	findRoleById(id: string): any {
 		return this.userModel.findById(id).select('role');
 	}
-
 	async findByLogin(login: string) {
 		return this.userModel.findOne({ login }).exec();
 	}
-
 	async findByMail(mail: string) {
 		return this.userModel.findOne({ mail }).exec();
 	}
-
 	async validateUser(loginDto: LoginDto) {
 		let user = await this.findByLogin(loginDto.login);
 		if (!user) {
@@ -100,7 +91,6 @@ export class UserService {
 		return { user: user };
 
 	}
-
 	async savePublication(id: string, publicationId: string) {
 		const user = await this.userModel.findById(id);
 		if (!user) {
@@ -109,17 +99,24 @@ export class UserService {
 		user.saved.push(new Types.ObjectId(publicationId));
 		return user.save();
 	}
+	async removePublication(userId: string, publicationId: string): Promise<UserDocument> {
+		const user = await this.userModel.findById(userId);
+		if (!user) {
+			throw new NotFoundException(`User with id ${userId} not found`);
+		}
 
+		const publicationObjectId = new Types.ObjectId(publicationId);
+		user.saved = user.saved.filter(pubId => !pubId.equals(publicationObjectId));
+		return user.save();
+	}
 	async isLoginUnique(login: string): Promise<boolean> {
 		const user = await this.userModel.findOne({ login });
 		return !user;
 	}
-
 	async isEmailUnique(email: string): Promise<boolean> {
 		const user = await this.userModel.findOne({ email });
 		return !user;
 	}
-
 	async update(id: string, updateDto: UpdateDto): Promise<UserDocument> {
 		const { login, email, ...rest } = updateDto;
 
@@ -147,7 +144,6 @@ export class UserService {
 
 		return user
 	}
-
 	async changePassword(id: string, changePasswordDto: ChangePasswordDto){
 		const user = await this.userModel.findById(id);
 		console.log(user)
@@ -166,7 +162,6 @@ export class UserService {
 		user.passwordHash = passwordHash;
 		return user.save();
 	}
-
 	async getSavedPublications(userId: string) {
 		console.log(userId)
 		const user = await this.userModel
@@ -181,4 +176,13 @@ export class UserService {
 		}
 		return user.saved;
 	}
+	async deleteUser(id: string): Promise<any> {
+		const user = await this.userModel.findById(id);
+		if (!user) {
+			throw new NotFoundException(`User with id ${id} not found`);
+		}
+		await user.deleteOne();
+		return { message: `User with id ${id} has been successfully deleted` };
+	}
+
 }

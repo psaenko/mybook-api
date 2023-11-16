@@ -4,6 +4,8 @@ import { Model } from 'mongoose';
 import { Publication, PublicationDocument } from './publication.model';
 import { PublicationDto } from './dto/publication.dto';
 import { SubCategory, SubCategoryDocument } from '../sub-category/sub-category.model';
+import { Group, GroupDocument } from '../group/group.model';
+import { Category, CategoryDocument } from '../category/category.model';
 
 const PAGE_LIMIT = 10;
 
@@ -14,6 +16,8 @@ export class PublicationService {
 	constructor(
 		@InjectModel(Publication.name) private publicationModel: Model<PublicationDocument>,
 		@InjectModel(SubCategory.name) private subCategoryModel: Model<SubCategoryDocument>,
+		@InjectModel(Group.name) private groupModel: Model<GroupDocument>,
+		@InjectModel(Category.name) private categoryModel: Model<CategoryDocument>,
 	) {
 	}
 
@@ -54,6 +58,9 @@ export class PublicationService {
 
 		const query: any = { category: { $in: subCategoryIds } };
 
+		const groupName = await this.groupModel.findOne({ categories: mainCategoryId }).select('name');
+		const categoryName = await this.categoryModel.findById(mainCategoryId).select('name');
+
 		if (authors && authors.length > 0) {
 			query['authors'] = { $in: authors };
 		}
@@ -63,7 +70,7 @@ export class PublicationService {
 		}
 
 		if (hasFiles !== undefined) {
-			query['files'] = hasFiles ? { $exists: true, $not: {$size: 0} } : { $size: 0 };
+			query['files'] = hasFiles ? { $exists: hasFiles, $not: { $size: 0 } } : { $size: 0 };
 		}
 
 		if (startYear && endYear) {
@@ -83,10 +90,13 @@ export class PublicationService {
 				.populate('authors', 'name -_id'),
 		]);
 		this.logger.log(`Finding all publications by main category with id: ${mainCategoryId}`);
+
 		return {
 			data,
 			total,
 			totalPages: Math.ceil(total / PAGE_LIMIT),
+			groupName,
+			categoryName
 		};
 	}
 

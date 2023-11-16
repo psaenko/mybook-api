@@ -7,6 +7,8 @@ import { Publication, PublicationModel } from './publication.model';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { getJWTConfig } from '../configs/jwt.config';
+import { Group, GroupModel } from '../group/group.model';
+import { Category, CategoryModel } from '../category/category.model';
 
 @Module({
   providers: [PublicationService],
@@ -14,6 +16,8 @@ import { getJWTConfig } from '../configs/jwt.config';
   imports: [MongooseModule.forFeature([
     { name: Publication.name, schema: PublicationModel },
     { name: SubCategory.name, schema: SubCategoryModel },
+    { name: Group.name, schema: GroupModel },
+    { name: Category.name, schema: CategoryModel },
   ]),
     JwtModule.registerAsync({
       imports: [ConfigModule],

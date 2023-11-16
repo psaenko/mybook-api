@@ -1,7 +1,7 @@
 import {
 	BadRequestException,
 	Body,
-	Controller,
+	Controller, Delete,
 	Get,
 	Logger, Param, ParseIntPipe, Patch,
 	Post,
@@ -55,6 +55,21 @@ export class UserController {
 	private logAndThrowError(createDto: CreateDto, error: string) {
 		this.logger.error(`On created user: ${createDto.fullName} (${createDto.login}). Error - ${error}`);
 		throw new BadRequestException(error);
+	}
+
+	@ApiBearerAuth()
+	@ApiOperation({ summary: 'Remove a saved publication' })
+	@ApiResponse({ status: 200, description: 'The publication has been successfully removed from favorites.' })
+	@ApiResponse({ status: 404, description: 'User or publication not found.' })
+	@ApiRoles('ADMIN', 'USER')
+	@Roles('ADMIN', 'USER')
+	@UseGuards(RolesGuard)
+	@Delete('/remove-publication/:userId/:publicationId')
+	async removePublication(
+		@Param('userId') userId: string,
+		@Param('publicationId') publicationId: string,
+	) {
+		return this.userService.removePublication(userId, publicationId);
 	}
 
 	@ApiBearerAuth()
@@ -119,4 +134,15 @@ export class UserController {
 	async getSavedPublications(@Param('id') userId: string) {
 		return this.userService.getSavedPublications(userId);
 	}
+
+	@ApiBearerAuth()
+	@ApiOperation({ summary: 'Delete a user' })
+	@ApiResponse({ status: 200, description: 'The user has been successfully deleted.' })
+	@ApiResponse({ status: 404, description: 'User not found.' })
+	@UseGuards(RolesGuard)
+	@Delete('/:id')
+	async deleteUser(@Param('id') id: string) {
+		return this.userService.deleteUser(id);
+	}
+
 }
