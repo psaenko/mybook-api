@@ -11,10 +11,10 @@ export class SubCategoryDto {
 
 	@ApiProperty({
 		example: true,
-		required: true
+		required: false
 	})
-	@IsBoolean()
 	@IsOptional()
+	@IsBoolean()
 	isShow: boolean;
 
 	@ApiProperty({
@@ -22,5 +22,5 @@ export class SubCategoryDto {
 		required: true
 	})
 	@IsString()
-	mainCategoryId: string;
+	mainCategory: string;
 }

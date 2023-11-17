@@ -52,6 +52,14 @@ export class AuthorService {
 		return author;
 	}
 
+	async findByName(name: string) {
+		const author = await this.authorModel.find({ name });
+		if (!author) {
+			throw new NotFoundException(NOT_FOUND_ERROR);
+		}
+		return author;
+	}
+
 	async update(id: string, updateDto: UpdateDto) {
 		return this.authorModel.findByIdAndUpdate(id, updateDto, { new: true });
 	}

@@ -136,7 +136,7 @@ export class UserService {
 			id,
 			{ login, email, ...rest },
 			{ new: true }
-		);
+		).populate('school', 'name');
 
 		if (!user) {
 			throw new NotFoundException(`User with id ${id} not found`);

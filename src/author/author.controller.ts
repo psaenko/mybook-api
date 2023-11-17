@@ -16,8 +16,7 @@ export class AuthorController {
 	@ApiResponse({ status: 201, description: 'The author has been successfully created.' })
 	@ApiResponse({ status: 400, description: 'Author already exists or invalid data.' })
 	@ApiResponse({ status: 403, description: 'Forbidden.' })
-	@Roles('ADMIN')
-	@UseGuards(RolesGuard)
+
 	@Post()
 	create(@Body() createDto: CreateDto) {
 		return this.authorService.create(createDto);
@@ -54,6 +53,18 @@ export class AuthorController {
 	@Get(':id')
 	findById(@Param('id') id: string) {
 		return this.authorService.findById(id);
+	}
+
+	@ApiBearerAuth()
+	@ApiParam({ name: 'id', required: true, example: '6512f25c770624afefed1293' })
+	@ApiOperation({ summary: 'Get a author by its id' })
+	@ApiResponse({ status: 200, description: 'Returns the author found.' })
+	@ApiResponse({ status: 403, description: 'Forbidden.' })
+	@ApiResponse({ status: 404, description: 'Author not found.' })
+
+	@Get('find/:name')
+	findByName(@Param('name') name: string) {
+		return this.authorService.findByName(name);
 	}
 
 	@ApiBearerAuth()

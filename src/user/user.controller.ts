@@ -61,9 +61,6 @@ export class UserController {
 	@ApiOperation({ summary: 'Remove a saved publication' })
 	@ApiResponse({ status: 200, description: 'The publication has been successfully removed from favorites.' })
 	@ApiResponse({ status: 404, description: 'User or publication not found.' })
-	@ApiRoles('ADMIN', 'USER')
-	@Roles('ADMIN', 'USER')
-	@UseGuards(RolesGuard)
 	@Delete('/remove-publication/:userId/:publicationId')
 	async removePublication(
 		@Param('userId') userId: string,

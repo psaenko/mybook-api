@@ -31,9 +31,7 @@ export class PublicationController {
 	@ApiOperation({ summary: 'Creating new publication' })
 	@ApiResponse({ status: 200, description: 'Returns new category info.' })
 	@ApiResponse({ status: 403, description: 'Forbidden.' })
-	@ApiRoles('ADMIN')
-	@Roles('ADMIN')
-	@UseGuards(RolesGuard)
+
 	@Post()
 	async create(@Body() publicationDto: PublicationDto) {
 		return this.publicationService.create(publicationDto);
@@ -66,7 +64,6 @@ export class PublicationController {
 	@ApiQuery({ name: 'endYear', required: false, example: 2020 })
 	@ApiQuery({ name: 'isShow', type: Boolean, required: true, example: [true, false] })
 	@ApiQuery({ name: 'page', type: Number, required: true, example: 1 })
-	@ApiRoles('ALL ROLES')
 	@Get('category/:categoryId')
 	async findAllByCategory(
 		@Param('categoryId') categoryId: string,

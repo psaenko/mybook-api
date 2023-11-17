@@ -19,6 +19,10 @@ export class SubCategory {
 	@ApiProperty({required: true, example: '6512f25c770624afefed1293'})
 	@Prop({ required: true, type: MSchema.Types.ObjectId, ref: 'Category' })
 	mainCategory: Category;
+
+	@ApiProperty({required: false	, example: '1'})
+	@Prop({ required: false	, type: Number, ref: 'Category' })
+	oldID: number;
 }
 
 export const SubCategoryModel = SchemaFactory.createForClass(SubCategory);

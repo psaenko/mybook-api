@@ -13,7 +13,7 @@ export class CreateDto {
 export class UpdateDto {
 	@ApiProperty({
 		example: false,
-		required: true,
+		required: false,
 	})
 	@IsString()
 	isShow: boolean;

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsString, IsOptional } from 'class-validator';
+import { IsBoolean, IsString, IsOptional, IsNumber } from 'class-validator';
 import { Types } from 'mongoose';
 
 export class CreateSubCategoryDto {
@@ -11,10 +11,17 @@ export class CreateSubCategoryDto {
 	name: string;
 
 	@ApiProperty({
-		example: true,
+		example: '1',
 		required: true
 	})
-	@IsBoolean()
+	@IsNumber()
+	oldID: number;
+
+	@ApiProperty({
+		example: true,
+		required: false
+	})
+	@IsOptional()
 	@IsBoolean()
 	isShow: boolean;
 
@@ -22,7 +29,6 @@ export class CreateSubCategoryDto {
 		example: 'qwqwfqwfwekjgnwefmdmqwjfw',
 		required: true
 	})
-	@IsBoolean()
 	@IsString()
-	mainCategoryId: Types.ObjectId;
+	mainCategory: Types.ObjectId;
 }

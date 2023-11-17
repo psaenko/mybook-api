@@ -31,6 +31,22 @@ export class PublicationDto {
 	description: string;
 
 	@ApiProperty({
+		example: '1',
+		required: false
+	})
+	@IsNumber()
+	@IsOptional()
+	class: number;
+
+	@ApiProperty({
+		example: '1',
+		required: false
+	})
+	@IsNumber()
+	@IsOptional()
+	oldID: number;
+
+	@ApiProperty({
 		example: '6512f25c770624afefed1293',
 		required: true
 	})

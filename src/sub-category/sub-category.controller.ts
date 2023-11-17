@@ -32,18 +32,21 @@ export class SubCategoryController {
 	@ApiOperation({ summary: 'Create new sub-category' })
 	@ApiResponse({ status: 200, description: 'Returns new sub-category info.' })
 	@ApiResponse({ status: 403, description: 'Forbidden.' })
-	@ApiRoles('ADMIN')
-	@Roles('ADMIN')
-	@UseGuards(RolesGuard)
-	@UsePipes(new ValidationPipe())
+
 	@Post()
 	async create(@Body() createSubCategoryDto: CreateSubCategoryDto) {
+
 		const existingSubCategory = await this.subCategoryService.findByName(createSubCategoryDto.name);
 		if (existingSubCategory) {
 			this.logger.error(`On created sub-category: ${createSubCategoryDto.name}. Error - ${ALREADY_EXIST_ERROR}`);
 			throw new BadRequestException(ALREADY_EXIST_ERROR);
 		}
 		return this.subCategoryService.create(createSubCategoryDto);
+	}
+
+	@Get('/find/:id')
+	async findOld(@Param('id') id: number) {
+		return this.subCategoryService.findOld(id);
 	}
 
 	@ApiOperation({ summary: 'Get all sub-categories' })
@@ -95,6 +98,7 @@ export class SubCategoryController {
 	@ApiParam({ name: 'id', required: true, example: '6512f25c770624afefed1293' })
 	@Delete(':id')
 	async delete(@Param('id') id: string) {
+		console.log(id)
 		return this.subCategoryService.delete(id);
 	}
 }

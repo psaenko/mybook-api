@@ -30,6 +30,12 @@ export class Publication {
 	@Prop({required: true})
 	mainFile: string;
 
+	@Prop({required: false})
+	calss: number;
+
+	@Prop({required: false})
+	oldID: number;
+
 	@Prop({ type: [String], default: [] })
 	files: string[];
 }

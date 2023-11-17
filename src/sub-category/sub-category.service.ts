@@ -27,6 +27,10 @@ export class SubCategoryService {
 		return this.subCategoryModel.findById(id);
 	}
 
+	async findOld(id: number) {
+		return this.subCategoryModel.find({ oldID: id });
+	}
+
 	async update(id: string, isCheck: boolean) {
 		return this.subCategoryModel.findByIdAndUpdate(id, { isShow: isCheck }, { new: true });
 	}

@@ -80,12 +80,11 @@ export class PublicationService {
 			query.isShow = isShow;
 		}
 
+		console.log(query)
 		const [total, data] = await Promise.all([
 			this.publicationModel.countDocuments(query),
 			this.publicationModel
 				.find(query)
-				.skip(skip)
-				.limit(PAGE_LIMIT)
 				.populate('category', 'name')
 				.populate('authors', 'name -_id'),
 		]);
