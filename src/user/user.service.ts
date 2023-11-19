@@ -146,13 +146,11 @@ export class UserService {
 	}
 	async changePassword(id: string, changePasswordDto: ChangePasswordDto){
 		const user = await this.userModel.findById(id);
-		console.log(user)
 		if (!user) {
 			throw new NotFoundException(`User with id ${id} not found`);
 		}
 
 		const { oldPassword, newPassword } = changePasswordDto;
-
 		if (user.passwordHash && !(await compare(oldPassword, user.passwordHash))) {
 			throw new BadRequestException('Incorrect old password');
 		}

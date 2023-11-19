@@ -66,9 +66,8 @@ export class UpdateDto {
 
 export class ChangePasswordDto {
 
-	@IsOptional()
 	@IsString()
-	oldPassword?: string;
+	oldPassword: string;
 
 	@IsString()
 	newPassword: string;

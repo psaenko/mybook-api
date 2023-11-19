@@ -14,6 +14,7 @@ export class CreateSubCategoryDto {
 		example: '1',
 		required: true
 	})
+	@IsOptional()
 	@IsNumber()
 	oldID: number;
 

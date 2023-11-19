@@ -13,7 +13,7 @@ async function bootstrap() {
 		.setDescription('RES API documentation for web app MyBook')
 		.setVersion('1.0')
 		.addServer('http://localhost:50000/api/', 'Local environment')
-		.addServer('https://mybook.dniprorada.gov.ua/api/', 'Production environment')
+		.addServer('https://api.mybook.dniprorada.gov.ua/api/', 'Production environment')
 		.addServer('https://mybook-api-production.up.railway.app/api/', 'TEST production environment')
 		.build();
 
@@ -21,10 +21,8 @@ async function bootstrap() {
 	SwaggerModule.setup('/api/documentation', app, document);
 
 	app.setGlobalPrefix('api');
-
-	app.enableCors({origin: ['http://localhost:3005', process.env.CLIENT_API]});
+	app.enableCors();
 	await app.listen(process.env.PORT || 50000);
 	logger.log(`API running on ${process.env.PORT || 50000} port`)
 }
-
 bootstrap();
